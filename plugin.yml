@@ -1,0 +1,15 @@
+name: Improved Jail
+main: com.untoldadventures.ImprovedJail
+version: 0.1
+author: UntoldAdventures
+website: www.bukkit.org
+commands:
+  ij:
+    description: The base command for the Improved Jail Plugin
+    usage: |
+           Usage:
+           /<command> jail [player] [time] [reason] - Jail a player.
+           /<command> unjail [player] - Release a player.
+           /<command> setjail - Set the jail.
+           /<command> check [player] - Check the time remaining on the player's sentence.
+           /<command> pardon [player] [time] - Pardon the player's sentence x minutes.
