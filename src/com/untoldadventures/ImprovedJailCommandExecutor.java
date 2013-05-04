@@ -27,6 +27,7 @@ public class ImprovedJailCommandExecutor implements CommandExecutor
 		Player player = (Player) sender;
 		Server server = player.getServer();
 		Player target;
+		String time;
 
 		if (args.length == 0)
 		{
@@ -57,7 +58,7 @@ public class ImprovedJailCommandExecutor implements CommandExecutor
 								}
 							}
 						}
-						
+
 						int returnX = target.getLocation().getBlockX();
 						int returnY = target.getLocation().getBlockY();
 						int returnZ = target.getLocation().getBlockZ();
@@ -144,7 +145,6 @@ public class ImprovedJailCommandExecutor implements CommandExecutor
 						ImprovedJail.jailConfig.set(target.getName() + ".jailLength", 0);
 						ImprovedJail.jailConfig.set(target.getName() + ".timeElapsed", 0);
 
-						
 						plugin.saveConfig();
 						return true;
 					}
@@ -226,7 +226,6 @@ public class ImprovedJailCommandExecutor implements CommandExecutor
 						ImprovedJail.jailConfig.set(target.getName() + ".jailLength", 0);
 						ImprovedJail.jailConfig.set(target.getName() + ".timeElapsed", 0);
 
-						
 						plugin.saveConfig();
 					}
 
@@ -240,6 +239,34 @@ public class ImprovedJailCommandExecutor implements CommandExecutor
 			}
 
 		}
+		if (args[0].equalsIgnoreCase("pay"))
+		{
+			if (ImprovedJail.jailConfig.getBoolean("economy.", true))
+			{
+				if (player.hasPermission("ij.pay"))
+				{
+					if (args.length == 3 || args.length == 4)
+					{
+						target = (Bukkit.getPlayer(args[1]));
+						time = (args[2]);
+						if (ImprovedJail.jailConfig.getBoolean(target.getName() + ".jailed") == false)
+						{
+							sender.sendMessage(ChatColor.GOLD + "[Jail] " + ChatColor.RED + target.getName() + " is not in jail!");
+							return true;
+						}
+						if (args.length == 3)
+						{
+							
+						}
+
+					}
+					return false;
+				}
+			}
+			sender.sendMessage(ChatColor.GOLD + "[Jail] " + ChatColor.RED + "Economy is disabled.");
+			return true;
+		}
 		return false;
+
 	}
 }

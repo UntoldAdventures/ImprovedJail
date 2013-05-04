@@ -2,6 +2,9 @@ package com.untoldadventures;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.logging.Logger;
+
+import net.milkbowl.vault.economy.Economy;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -18,6 +21,7 @@ import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.permissions.Permission;
+import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class ImprovedJail extends JavaPlugin implements Listener
@@ -27,6 +31,8 @@ public class ImprovedJail extends JavaPlugin implements Listener
 	public static File pluginFolder;
 	public static File configFile;
 	public static FileConfiguration jailConfig;
+	public static Economy econ = null;
+	private static final Logger log = Logger.getLogger("Minecraft");
 
 	@Override
 	public void onEnable()
@@ -38,6 +44,17 @@ public class ImprovedJail extends JavaPlugin implements Listener
 		this.getServer().getPluginManager().addPermission(new Permission("ij.unjail"));
 		this.getServer().getPluginManager().addPermission(new Permission("ij.setjail"));
 		this.getServer().getPluginManager().addPermission(new Permission("ij.pardon"));
+		// Vault Dependency
+		if (ImprovedJail.jailConfig.getBoolean("economy.", true))
+		{
+			if (!setupEconomy())
+			{
+				log.severe(String.format("[%s] - Disabled due to no Vault dependency found!", getDescription().getName()));
+				getServer().getPluginManager().disablePlugin(this);
+				return;
+			}
+		}
+
 		this.getServer().getScheduler().scheduleSyncRepeatingTask(this, new Runnable()
 		{
 			@Override
@@ -100,6 +117,8 @@ public class ImprovedJail extends JavaPlugin implements Listener
 		try
 		{
 			jailConfig.load(configFile);
+			ImprovedJail.jailConfig.set("economy.", false);
+			ImprovedJail.jailConfig.set("economy.pph", 1000);
 		} catch (Exception ex)
 		{
 		}
@@ -161,6 +180,22 @@ public class ImprovedJail extends JavaPlugin implements Listener
 			event.setCancelled(true);
 		}
 
+	}
+
+	// Vault
+	private boolean setupEconomy()
+	{
+		if (getServer().getPluginManager().getPlugin("Vault") == null)
+		{
+			return false;
+		}
+		RegisteredServiceProvider<Economy> rsp = getServer().getServicesManager().getRegistration(Economy.class);
+		if (rsp == null)
+		{
+			return false;
+		}
+		econ = rsp.getProvider();
+		return econ != null;
 	}
 
 }
