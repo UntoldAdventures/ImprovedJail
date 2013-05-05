@@ -27,14 +27,12 @@ public class ImprovedJailCommandExecutor implements CommandExecutor
 		Player player = (Player) sender;
 		Server server = player.getServer();
 		Player target;
-		String time;
-
 		if (args.length == 0)
 		{
 			return false;
 		}
 
-		if (args.length == 4)
+		if (args.length == 3)
 		{
 			if (args[0].equalsIgnoreCase("jail"))
 			{
@@ -71,7 +69,7 @@ public class ImprovedJailCommandExecutor implements CommandExecutor
 						Location jail = new Location(w, x, y, z);
 						target.teleport(jail);
 						sender.sendMessage(ChatColor.GOLD + "[Jail] " + ChatColor.RED + args[1] + " has been sentenced to jail for " + args[3] + " minutes.");
-						target.sendMessage(ChatColor.GOLD + "[Jail] " + ChatColor.RED + "You have been jailed by " + sender.getName() + " for " + args[3] + ". Sentenced for " + args[2]);
+						target.sendMessage(ChatColor.GOLD + "[Jail] " + ChatColor.RED + "You have been jailed by " + sender.getName() + " for " + args[2] + " minutes." );
 						ImprovedJail.jailConfig.set(target.getName() + ".jailed", true);
 						int jailLength = Integer.parseInt(args[2]);
 						ImprovedJail.jailConfig.set(target.getName() + ".jailLength", jailLength);
@@ -83,7 +81,7 @@ public class ImprovedJailCommandExecutor implements CommandExecutor
 
 				}
 
-				if (args.length != 4)
+				if (args.length != 3)
 				{
 					return false;
 				}
@@ -159,24 +157,27 @@ public class ImprovedJailCommandExecutor implements CommandExecutor
 
 		if (args[0].equalsIgnoreCase("check"))
 		{
-			if (args.length == 2)
+			if (player.hasPermission("ij.check"))
 			{
-				target = (Bukkit.getPlayer(args[1]));
-
-				if (ImprovedJail.jailConfig.getBoolean(target.getName() + ".jailed") == false)
+				if (args.length == 2)
 				{
-					sender.sendMessage(ChatColor.GOLD + "[Jail] " + ChatColor.RED + target.getName() + " is not in jail!");
+					target = (Bukkit.getPlayer(args[1]));
+
+					if (ImprovedJail.jailConfig.getBoolean(target.getName() + ".jailed") == false)
+					{
+						sender.sendMessage(ChatColor.GOLD + "[Jail] " + ChatColor.RED + target.getName() + " is not in jail!");
+						return true;
+					}
+
+					int jailLength = ImprovedJail.jailConfig.getInt(target.getName() + ".jailLength");
+					int timeElapsed = ImprovedJail.jailConfig.getInt(target.getName() + ".timeElapsed");
+
+					player.sendMessage(ChatColor.GOLD + "[Jail] " + ChatColor.RED + "Time left in sentence: " + (jailLength - timeElapsed) + " minutes.");
+
 					return true;
 				}
-
-				int jailLength = ImprovedJail.jailConfig.getInt(target.getName() + ".jailLength");
-				int timeElapsed = ImprovedJail.jailConfig.getInt(target.getName() + ".timeElapsed");
-
-				player.sendMessage(ChatColor.GOLD + "[Jail] " + ChatColor.RED + "Time left in sentence: " + (jailLength - timeElapsed) + " minutes.");
-
-				return true;
-
 			}
+
 			if (args.length == 1)
 			{
 				target = player;
@@ -248,7 +249,8 @@ public class ImprovedJailCommandExecutor implements CommandExecutor
 					if (args.length == 3 || args.length == 4)
 					{
 						target = (Bukkit.getPlayer(args[1]));
-						time = (args[2]);
+						ImprovedJail.jailConfig.getInt(target.getName() + ".jailLength");
+						ImprovedJail.jailConfig.getInt(target.getName() + ".timeElapsed");
 						if (ImprovedJail.jailConfig.getBoolean(target.getName() + ".jailed") == false)
 						{
 							sender.sendMessage(ChatColor.GOLD + "[Jail] " + ChatColor.RED + target.getName() + " is not in jail!");
@@ -256,6 +258,7 @@ public class ImprovedJailCommandExecutor implements CommandExecutor
 						}
 						if (args.length == 3)
 						{
+							
 							
 						}
 
