@@ -249,6 +249,8 @@ public class ImprovedJailCommandExecutor implements CommandExecutor
 					if (args.length == 3 || args.length == 4)
 					{
 						target = (Bukkit.getPlayer(args[1]));
+						int time = Integer.parseInt(args[0]);
+						int rate = (ImprovedJail.jailConfig.getInt("economy.rate"));
 						ImprovedJail.jailConfig.getInt(target.getName() + ".jailLength");
 						ImprovedJail.jailConfig.getInt(target.getName() + ".timeElapsed");
 						if (ImprovedJail.jailConfig.getBoolean(target.getName() + ".jailed") == false)
@@ -258,10 +260,37 @@ public class ImprovedJailCommandExecutor implements CommandExecutor
 						}
 						if (args.length == 3)
 						{
-							
-							
+							int remaining = ImprovedJail.jailConfig.getInt(target.getName() + ".jailLength") - ImprovedJail.jailConfig.getInt(target.getName() + ".timeElapsed");
+							int afterPay = remaining - time;
+							double cost = time * rate;
+							String pname = sender.getName();
+							boolean afford = ImprovedJail.econ.has(sender.getName(), cost);
+							if (afford == true)
+							{
+								ImprovedJail.jailConfig.set(target.getName() + ".timeElapsed", afterPay);
+								ImprovedJail.econ.withdrawPlayer(pname, cost);
+								plugin.saveConfig();
+							}
+							sender.sendMessage(ChatColor.GOLD + "[Jail]" + ChatColor.RED + " This costs: " + cost + ". You Have: " + ImprovedJail.econ.getBalance(pname));
+							return true;
 						}
-
+						if (args.length == 4)
+						{
+							int remaining = ImprovedJail.jailConfig.getInt(target.getName() + ".jailLength") - ImprovedJail.jailConfig.getInt(target.getName() + ".timeElapsed");
+							int afterPay = remaining - time;
+							double cost = time * rate;
+							String pname = sender.getName();
+							boolean afford = ImprovedJail.econ.has(sender.getName(), cost);
+							if (afford == true)
+							{
+								ImprovedJail.jailConfig.set(target.getName() + ".timeElapsed", afterPay);
+								ImprovedJail.econ.withdrawPlayer(pname, cost);
+								plugin.saveConfig();
+							}
+							sender.sendMessage(ChatColor.GOLD + "[Jail]" + ChatColor.RED + " This costs: " + cost + ". You Have: " + ImprovedJail.econ.getBalance(pname));
+							return true;
+						}
+						
 					}
 					return false;
 				}

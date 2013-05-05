@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.logging.Logger;
 
+import net.milkbowl.vault.chat.Chat;
 import net.milkbowl.vault.economy.Economy;
 
 import org.bukkit.ChatColor;
@@ -31,7 +32,9 @@ public class ImprovedJail extends JavaPlugin implements Listener
 	public static File pluginFolder;
 	public static File configFile;
 	public static FileConfiguration jailConfig;
+	public static Permission perms = null;
 	public static Economy econ = null;
+	public static Chat chat = null;
 	private static final Logger log = Logger.getLogger("Minecraft");
 
 	@Override
@@ -54,6 +57,9 @@ public class ImprovedJail extends JavaPlugin implements Listener
 				return;
 			}
 		}
+
+		setupPermissions();
+		setupChat();
 
 		this.getServer().getScheduler().scheduleSyncRepeatingTask(this, new Runnable()
 		{
@@ -118,7 +124,7 @@ public class ImprovedJail extends JavaPlugin implements Listener
 		{
 			jailConfig.load(configFile);
 			ImprovedJail.jailConfig.set("economy.", false);
-			ImprovedJail.jailConfig.set("economy.pph", 1000);
+			ImprovedJail.jailConfig.set("economy.rate", 1000);
 		} catch (Exception ex)
 		{
 		}
@@ -196,6 +202,19 @@ public class ImprovedJail extends JavaPlugin implements Listener
 		}
 		econ = rsp.getProvider();
 		return econ != null;
+	}
+	private boolean setupChat()
+	{
+		RegisteredServiceProvider<Chat> rsp = getServer().getServicesManager().getRegistration(Chat.class);
+		chat = rsp.getProvider();
+		return chat != null;
+	}
+
+	private boolean setupPermissions()
+	{
+		RegisteredServiceProvider<Permission> rsp = getServer().getServicesManager().getRegistration(Permission.class);
+		perms = rsp.getProvider();
+		return perms != null;
 	}
 
 }
