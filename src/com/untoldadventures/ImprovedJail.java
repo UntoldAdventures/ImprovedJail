@@ -27,7 +27,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 public class ImprovedJail extends JavaPlugin implements Listener
 {
-	public String Version = "0.1";
+	public String Version = "0.2";
 
 	public static File pluginFolder;
 	public static File configFile;
